@@ -1,0 +1,45 @@
+class Solution {
+public:
+    int find_parent(int node,int parent[]){
+        if(node==parent[node]){
+            return node;
+        }
+        return parent[node]=find_parent(parent[node],parent);
+    }
+    void union_by_rank(int a,int b,int parent[],int rank[]){
+        int parent_a=find_parent(a,parent);
+        int parent_b=find_parent(b,parent);
+        
+        if(rank[parent_a]>rank[parent_b]){
+            parent[parent_b]=parent_a;
+        }else if(rank[parent_b]>rank[parent_a]){
+            parent[parent_a]=parent_b;
+        }else{
+            parent[parent_a]=parent_b;
+            rank[parent_b]++;
+        }
+    }
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        int len=edges.size();
+        int parent[1000+1];
+        int rank[1000+1];
+        for(int i=0;i<=1000;i++){
+            parent[i]=i;
+            rank[i]=0;
+        }
+        vector<int>ans;
+        int a=0,b=0;
+        for(int i=0;i<len;i++){
+            int u=edges[i][0];
+            int v=edges[i][1];
+            if(find_parent(u,parent)==find_parent(v,parent)){
+                a=u,b=v;
+            }else{
+                union_by_rank(u,v,parent,rank);
+            }
+        }
+        ans.push_back(a);
+        ans.push_back(b);
+        return ans;
+    }
+};
